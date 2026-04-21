@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Μαθηματική Περιπέτεια: Πολλαπλασιασμοί</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    
+    <!-- Οθόνη Χάρτη / Επιλογής Επιπέδων -->
+    <div id="map-screen" class="screen active">
+        <header>
+            <img src="logo.png" id="header-logo" alt="Logo">
+            <h1>Μαθηματική Περιπέτεια</h1>
+            <p>Διάλεξε πίστα και μάζεψε αστέρια!</p>
+            <div id="total-stars-display">⭐ <span id="total-stars">0</span>/42</div>
+        </header>
+
+        <div class="map-container">
+            <!-- svg path drawing a curvy line behind levels -->
+            <svg class="map-path" id="map-path-svg">
+                <path id="map-path-line" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <path id="map-path-inner" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="levels-wrapper" id="levels-wrapper">
+                <!-- Τα επίπεδα θα δημιουργηθούν δυναμικά από τη JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Οθόνη Παιχνιδιού -->
+    <div id="game-screen" class="screen">
+        <div class="game-header">
+            <button id="btn-back" class="btn-round" title="Επιστροφή στον Χάρτη">↩</button>
+            <h2 id="level-title">Προπαίδεια του X</h2>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="score-display">💯 <span id="score">0</span></div>
+        </div>
+
+        <div class="game-board">
+            <div class="question-container">
+                <div id="question-text">3 x 4 = ?</div>
+            </div>
+
+            <div class="answers-grid" id="answers-grid">
+                <!-- Κουμπιά απαντήσεων -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Οθόνη Αποτελεσμάτων (Μόλις τελειώσει μια πίστα) -->
+    <div id="result-screen" class="screen modal-overlay">
+        <div class="result-modal">
+            <h2>Τέλος Πίστας!</h2>
+            <div class="stars-earned" id="stars-earned">
+                <span class="star" id="star1">⭐</span>
+                <span class="star" id="star2">⭐</span>
+                <span class="star" id="star3">⭐</span>
+            </div>
+            <p id="result-message">Μπράβο!</p>
+            <p>Σωστές Απαντήσεις: <span id="correct-count">0</span> / <span id="total-count">10</span></p>
+
+            <!-- Report — εμφανίζεται μόνο σε boss levels -->
+            <div id="boss-report" class="boss-report" style="display:none">
+                <h3 class="report-title">📊 Ανάλυση Αποτελεσμάτων</h3>
+                <div id="report-content"></div>
+            </div>
+
+            <button id="btn-continue" class="btn-primary">Συνέχεια</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

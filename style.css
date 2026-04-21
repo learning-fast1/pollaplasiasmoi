@@ -1,0 +1,647 @@
+:root {
+    --bg-gradient: linear-gradient(180deg, #2e7d32 0%, #388e3c 40%, #2e7d32 100%);
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --primary-color: #ff6b6b;
+    --primary-shadow: #c92a2a;
+    --secondary-color: #4ecdc4;
+    --secondary-shadow: #12b886;
+    --accent-color: #fca311;
+    --accent-shadow: #e85d04;
+    --text-main: #2b2d42;
+    --correct-bg: #8ce99a;
+    --correct-shadow: #2b8a3e;
+    --wrong-bg: #ffa8a8;
+    --wrong-shadow: #c92a2a;
+    --font-heading: 'Fredoka One', cursive;
+    --font-body: 'Nunito', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none; /* Prevent text selection to feel more like an app */
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    color: var(--text-main);
+    overflow: hidden; /* Hide scrollbars, full app feel */
+}
+
+/* ==================================================
+   ΣΥΣΤΗΜΑ ΟΘΟΝΩΝ (SCREENS)
+   ================================================== */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+    transform: scale(1.05);
+}
+
+.screen.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+    z-index: 10;
+}
+
+/* ==================================================
+   ΟΘΟΝΗ ΧΑΡΤΗ (MAP SCREEN)
+   ================================================== */
+#map-screen {
+    background:
+        linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.18)),
+        url('forest.jpg') center / cover no-repeat;
+}
+
+#map-screen header {
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 12px 20px 12px 110px; /* αριστερά χώρος για το logo */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    text-align: center;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    position: relative;
+    z-index: 2;
+    border-bottom: 2px solid rgba(255,255,255,0.15);
+}
+
+#header-logo {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 75px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(2px 3px 4px rgba(0,0,0,0.5));
+}
+
+#map-screen header h1 {
+    font-family: var(--font-heading);
+    color: #ffcc02;
+    font-size: 28px;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+}
+
+#map-screen header p {
+    font-size: 16px;
+    color: #ffe0b2;
+    margin-top: 5px;
+    font-weight: 700;
+}
+
+#total-stars-display {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fff3bf;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 900;
+    color: #e67700;
+    box-shadow: 0 4px 0 #fcc419;
+    font-size: 18px;
+}
+
+.map-container {
+    flex: 1;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 40px 20px 80px 20px; /* space for scrolling */
+}
+
+.map-container::-webkit-scrollbar {
+    width: 8px;
+}
+.map-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+}
+
+.map-path {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Στυλ για το μονοπάτι χωματόδρομο */
+#map-path-line {
+    stroke: #a0724a;
+    stroke-width: 18;
+    stroke-dasharray: none;
+    filter: drop-shadow(0 3px 4px rgba(0,0,0,0.4));
+}
+
+/* Εσωτερική γραμμή μονοπατιού (texture) */
+#map-path-inner {
+    stroke: #c49a6c;
+    stroke-width: 8;
+    stroke-dasharray: 20, 15;
+    stroke-linecap: round;
+}
+
+/* Δέντρα διακόσμησης */
+.bg-tree {
+    position: absolute;
+    font-size: 36px;
+    pointer-events: none;
+    z-index: 0;
+    line-height: 1;
+    filter: drop-shadow(2px 4px 3px rgba(0,0,0,0.4));
+    animation: treeSway 3s ease-in-out infinite;
+}
+
+@keyframes treeSway {
+    0%   { transform: rotate(-2deg) scale(1); }
+    50%  { transform: rotate(2deg) scale(1.04); }
+    100% { transform: rotate(-2deg) scale(1); }
+}
+
+/* Ποταμάκι - κινούμενο νερό */
+.river-flow {
+    animation: riverFlow 1.8s linear infinite;
+}
+
+@keyframes riverFlow {
+    from { stroke-dashoffset: 0; }
+    to   { stroke-dashoffset: -40; }
+}
+
+.levels-wrapper {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    padding-bottom: 50px;
+}
+
+/* Τα κουμπιά ανά επίπεδο (Map Nodes) */
+.level-node {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffca28, #f57f17);
+    box-shadow: 0 6px 0 #bf360c, 0 10px 20px rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: var(--font-heading);
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 4px solid rgba(255,255,255,0.8);
+    text-shadow: 1px 2px 3px rgba(0,0,0,0.4);
+}
+
+.level-node:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 0 var(--accent-shadow), 0 12px 20px rgba(0,0,0,0.3);
+}
+
+.level-node:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 var(--accent-shadow), 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Για να κάνουμε ζιγκ-ζαγκ (snake path) τοποθέτηση */
+.level-node:nth-child(even) { margin-left: 30vw; }
+.level-node:nth-child(odd) { margin-right: 30vw; }
+/* Αλλαγή χρώματος για τα boss levels 13 14 */
+.level-node.boss {
+    background: var(--primary-color);
+    box-shadow: 0 6px 0 var(--primary-shadow), 0 10px 15px rgba(0,0,0,0.2);
+    width: 90px;
+    height: 90px;
+}
+
+/* Stars under map nodes */
+.node-stars {
+    position: absolute;
+    bottom: -25px;
+    display: flex;
+    gap: 2px;
+    font-size: 14px;
+}
+
+.node-stars .star {
+    opacity: 0.3;
+    filter: grayscale(100%);
+    transition: 0.3s;
+}
+.node-stars .star.earned {
+    opacity: 1;
+    filter: none;
+    transform: scale(1.2);
+}
+
+.node-label {
+    position: absolute;
+    top: -30px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 800;
+    white-space: nowrap;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* ==================================================
+   ΟΘΟΝΗ ΠΑΙΧΝΙΔΙΟΥ (GAME SCREEN)
+   ================================================== */
+#game-screen {
+    background: rgba(255,255,255,0.95);
+}
+
+.game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.btn-round {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: var(--secondary-color);
+    color: white;
+    font-size: 24px;
+    line-height: 50px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--secondary-shadow);
+    transition: 0.1s;
+    font-weight: bold;
+}
+.btn-round:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 var(--secondary-shadow);
+}
+
+#level-title {
+    font-family: var(--font-heading);
+    color: var(--primary-color);
+    font-size: 24px;
+}
+
+.progress-container {
+    flex: 1;
+    margin: 0 20px;
+    height: 15px;
+    background: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: var(--secondary-color);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.score-display {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    color: var(--text-main);
+    background: #fff3bf;
+    padding: 5px 15px;
+    border-radius: 15px;
+    box-shadow: 0 3px 0 #fcc419;
+}
+
+.game-board {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.question-container {
+    background: white;
+    border-radius: 30px;
+    padding: 40px 60px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin-bottom: 40px;
+    border: 5px solid var(--primary-color);
+    animation: floating 3s ease-in-out infinite;
+}
+
+#question-text {
+    font-family: var(--font-heading);
+    font-size: 60px;
+    color: var(--text-main);
+    text-align: center;
+}
+
+.answers-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.answer-btn {
+    background: #fff;
+    border: 4px solid var(--secondary-color);
+    border-radius: 20px;
+    padding: 20px 0;
+    font-family: var(--font-heading);
+    font-size: 36px;
+    color: var(--text-main);
+    cursor: pointer;
+    box-shadow: 0 8px 0 var(--secondary-shadow), 0 10px 10px rgba(0,0,0,0.1);
+    transition: all 0.15s;
+}
+
+.answer-btn:hover {
+    transform: translateY(-2px);
+}
+
+.answer-btn:active {
+    transform: translateY(6px);
+    box-shadow: 0 2px 0 var(--secondary-shadow), 0 3px 5px rgba(0,0,0,0.1);
+}
+
+/* Χρώματα κατάστασης Απάντησης */
+.answer-btn.correct {
+    background: var(--correct-bg);
+    border-color: var(--correct-shadow);
+    color: white;
+    box-shadow: 0 8px 0 var(--correct-shadow);
+    animation: correctPop 0.5s;
+}
+.answer-btn.correct:active {
+    box-shadow: 0 2px 0 var(--correct-shadow);
+}
+
+.answer-btn.wrong {
+    background: var(--wrong-bg);
+    border-color: var(--wrong-shadow);
+    color: white;
+    box-shadow: 0 8px 0 var(--wrong-shadow);
+    animation: wrongShake 0.4s;
+}
+.answer-btn.wrong:active {
+    box-shadow: 0 2px 0 var(--wrong-shadow);
+}
+
+/* ==================================================
+   ΟΘΟΝΗ ΑΠΟΤΕΛΕΣΜΑΤΩΝ (MODAL)
+   ================================================== */
+.modal-overlay {
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+}
+
+.result-modal {
+    background: white;
+    border-radius: 30px;
+    padding: 40px;
+    width: 90%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    border: 5px solid var(--accent-color);
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ── BOSS REPORT ── */
+.boss-report {
+    margin: 18px 0 10px;
+    text-align: left;
+}
+
+.report-title {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    color: var(--text-main);
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.report-perfect {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: #2e7d32;
+    padding: 10px;
+}
+
+.report-subtitle {
+    font-size: 14px;
+    font-weight: 800;
+    color: #666;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.report-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.report-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.report-label {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    color: white;
+    background: var(--primary-color);
+    border-radius: 8px;
+    padding: 3px 8px;
+    min-width: 42px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.report-bar-bg {
+    flex: 1;
+    height: 18px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.report-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff6b6b, #ff8e53);
+    border-radius: 10px;
+    min-width: 6px;
+    transition: width 0.8s ease;
+}
+
+.report-count {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--primary-color);
+    min-width: 52px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.report-ok-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.report-ok-label {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    color: white;
+    background: #66bb6a;
+    border-radius: 8px;
+    padding: 3px 8px;
+    min-width: 42px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.report-ok-text {
+    font-size: 13px;
+    color: #2e7d32;
+    font-weight: 800;
+}
+
+.result-modal h2 {
+    font-family: var(--font-heading);
+    color: var(--primary-color);
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.stars-earned {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+
+.stars-earned .star {
+    opacity: 0.2;
+    filter: grayscale(100%);
+    transform: scale(0.8);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.stars-earned .star.active {
+    opacity: 1;
+    filter: none;
+    transform: scale(1.2);
+}
+
+#result-message {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: #495057;
+}
+
+.btn-primary {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 15px 40px;
+    font-family: var(--font-heading);
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 6px 0 var(--accent-shadow);
+    margin-top: 20px;
+    transition: 0.1s;
+}
+.btn-primary:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 var(--accent-shadow);
+}
+
+/* ==================================================
+   ANIMATIONS
+   ================================================== */
+@keyframes floating {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes correctPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes wrongShake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-10px); }
+    40% { transform: translateX(10px); }
+    60% { transform: translateX(-10px); }
+    80% { transform: translateX(10px); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Ανταπόκριση για Κινητά / Tablets */
+@media (max-width: 600px) {
+    #question-text { font-size: 48px; }
+    .question-container { padding: 30px; }
+    .answer-btn { font-size: 28px; padding: 15px 0; }
+    .level-node { width: 70px; height: 70px; font-size: 24px; }
+    #map-screen header h1 { font-size: 24px; }
+    #total-stars-display { 
+        position: static; 
+        transform: none; 
+        display: inline-block;
+        margin-top: 10px; 
+    }
+}
