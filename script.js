@@ -217,27 +217,33 @@ function generateQuestion() {
 
 function generateAnswers() {
     answersGrid.innerHTML = '';
-    
+
     let answers = [questionData.correctAnswer];
-    
-    while(answers.length < 4) {
-        // Generate a plausible fake answer
+    let safetyCounter = 0;
+
+    while (answers.length < 4) {
+        safetyCounter++;
+        if (safetyCounter > 200) break; // αποφυγή infinite loop
+
         let fakeOffset = Math.floor(Math.random() * 5) + 1;
-        let isPlus = Math.random() > 0.5;
-        let fakeAns = isPlus ? questionData.correctAnswer + fakeOffset : questionData.correctAnswer - fakeOffset;
-        
-        // Sometimes just randomly generate 
+        let fakeAns = Math.random() > 0.5
+            ? questionData.correctAnswer + fakeOffset
+            : questionData.correctAnswer - fakeOffset;
+
         if (Math.random() > 0.7) {
-            fakeAns = Math.floor(Math.random() * 100);
+            fakeAns = Math.floor(Math.random() * 120) + 1;
         }
 
-        // Specific common mistakes
+        // Τυπικό λάθος: a*(b+1) — μόνο αν δεν υπάρχει ήδη
         if (answers.length === 2 && questionData.a !== 0 && questionData.b !== 0) {
-            fakeAns = questionData.a * (questionData.b + 1);
+            const commonMistake = questionData.a * (questionData.b + 1);
+            if (!answers.includes(commonMistake)) {
+                fakeAns = commonMistake;
+            }
         }
 
         if (fakeAns < 0) fakeAns = 0;
-        
+
         if (!answers.includes(fakeAns)) {
             answers.push(fakeAns);
         }
