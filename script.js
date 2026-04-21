@@ -12,20 +12,36 @@ const LEVELS = [
     { id: 10, title: "Προπαίδεια του 9", type: "single", table: 9 },
     { id: 11, title: "Προπαίδεια του 10", type: "single", table: 10 },
     { id: 12, title: "Προπαίδεια του 11", type: "single", table: 11 },
-    { id: 13, title: "Μίνι Boss: 0→5", type: "distributed", isBoss: true,
+    { id: 13, title: "Μίνι Boss: 0→5", type: "distributed", isBoss: true, questions: 20,
       distribution: [
-          { table: 0, count: 1 },
-          { table: 1, count: 1 },
-          { table: 2, count: 2 },
-          { table: 3, count: 2 },
-          { table: 4, count: 2 },
-          { table: 5, count: 2 }
+          { table: 0, count: 2 },
+          { table: 1, count: 2 },
+          { table: 2, count: 4 },
+          { table: 3, count: 4 },
+          { table: 4, count: 4 },
+          { table: 5, count: 4 }
       ]
     },
-    { id: 14, title: "Τελικός Αρχηγός", type: "mixed", tables: [0,1,2,3,4,5,6,7,8,9,10,11], isBoss: true }
+    { id: 14, title: "Τελικός Αρχηγός", type: "distributed", isBoss: true, questions: 30,
+      distribution: [
+          { table: 0,  count: 1 },
+          { table: 1,  count: 1 },
+          { table: 2,  count: 2 },
+          { table: 3,  count: 2 },
+          { table: 4,  count: 2 },
+          { table: 5,  count: 2 },
+          { table: 10, count: 2 },
+          { table: 11, count: 2 },
+          { table: 6,  count: 4, minB: 6 },
+          { table: 7,  count: 4, minB: 6 },
+          { table: 8,  count: 4, minB: 6 },
+          { table: 9,  count: 4, minB: 6 }
+      ]
+    }
 ];
 
-const TOTAL_QUESTIONS = 10;
+const DEFAULT_QUESTIONS = 10;
+let levelQuestions = DEFAULT_QUESTIONS; // ενημερώνεται στο startGame
 let currentLevel = null;
 let currentQuestionIndex = 0;
 let currentCorrectAnswers = 0;
@@ -155,12 +171,13 @@ function startGame(level) {
     currentCorrectAnswers = 0;
     currentTableQueue = null;
 
+    levelQuestions = level.questions || DEFAULT_QUESTIONS;
     tableErrors = {};
 
     if (level.type === 'distributed') {
         let queue = [];
-        level.distribution.forEach(({ table, count }) => {
-            for (let i = 0; i < count; i++) queue.push(table);
+        level.distribution.forEach(({ table, count, minB }) => {
+            for (let i = 0; i < count; i++) queue.push({ table, minB: minB || 0 });
         });
         queue.sort(() => Math.random() - 0.5);
         currentTableQueue = queue;
@@ -177,9 +194,9 @@ function startGame(level) {
 
 function generateQuestion() {
     // Progress
-    progressBar.style.width = `${(currentQuestionIndex / TOTAL_QUESTIONS) * 100}%`;
+    progressBar.style.width = `${(currentQuestionIndex / levelQuestions) * 100}%`;
     
-    if (currentQuestionIndex >= TOTAL_QUESTIONS) {
+    if (currentQuestionIndex >= levelQuestions) {
         endGame();
         return;
     }
@@ -190,8 +207,10 @@ function generateQuestion() {
         tableA = currentLevel.table;
         numberB = Math.floor(Math.random() * 12);
     } else if (currentLevel.type === 'distributed') {
-        tableA = currentTableQueue[currentQuestionIndex];
-        numberB = Math.floor(Math.random() * 12);
+        const entry = currentTableQueue[currentQuestionIndex];
+        tableA = entry.table;
+        const minB = entry.minB || 0;
+        numberB = minB + Math.floor(Math.random() * (12 - minB));
     } else {
         const randomIndex = Math.floor(Math.random() * currentLevel.tables.length);
         tableA = currentLevel.tables[randomIndex];
@@ -297,7 +316,7 @@ function endGame() {
     setTimeout(() => {
         // Calculate Stars
         let stars = 0;
-        if (currentCorrectAnswers === TOTAL_QUESTIONS) stars = 3;
+        if (currentCorrectAnswers === levelQuestions) stars = 3;
         else if (currentCorrectAnswers >= 7) stars = 2;
         else if (currentCorrectAnswers >= 4) stars = 1;
 
@@ -309,7 +328,7 @@ function endGame() {
         
         // Set UI
         correctCountText.textContent = currentCorrectAnswers;
-        totalCountText.textContent = TOTAL_QUESTIONS;
+        totalCountText.textContent = levelQuestions;
         
         const starIcons = starsEarned.querySelectorAll('.star');
         starIcons.forEach(s => s.classList.remove('active'));
