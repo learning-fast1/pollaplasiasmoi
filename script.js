@@ -41,13 +41,46 @@ const LEVELS = [
 ];
 
 const DEFAULT_QUESTIONS = 10;
-let levelQuestions = DEFAULT_QUESTIONS; // ενημερώνεται στο startGame
+let levelQuestions = DEFAULT_QUESTIONS;
 let currentLevel = null;
 let currentQuestionIndex = 0;
 let currentCorrectAnswers = 0;
 let questionData = {};
-let currentTableQueue = null;
-let tableErrors = {}; // λάθη ανά πίνακα για boss report
+let questionQueue = []; // ουρά μοναδικών πράξεων για το τρέχον επίπεδο
+let tableErrors = {};
+
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function buildQuestionQueue(level) {
+    const questions = [];
+
+    if (level.type === 'single') {
+        const t = level.table;
+        const pool = shuffle(Array.from({ length: 12 }, (_, i) => i));
+        const count = Math.min(levelQuestions, pool.length);
+        for (let i = 0; i < count; i++) {
+            questions.push({ tableVal: t, otherVal: pool[i], table: t });
+        }
+    } else if (level.type === 'distributed') {
+        level.distribution.forEach(({ table, count, minB }) => {
+            const min = minB || 0;
+            const pool = shuffle(Array.from({ length: 12 - min }, (_, i) => i + min));
+            const take = Math.min(count, pool.length);
+            for (let i = 0; i < take; i++) {
+                questions.push({ tableVal: table, otherVal: pool[i], table });
+            }
+        });
+        shuffle(questions);
+    }
+
+    return questions;
+}
 
 let userProgress = JSON.parse(localStorage.getItem('mathAdventureProgress')) || {};
 
@@ -169,19 +202,9 @@ function startGame(level) {
     currentLevel = level;
     currentQuestionIndex = 0;
     currentCorrectAnswers = 0;
-    currentTableQueue = null;
-
     levelQuestions = level.questions || DEFAULT_QUESTIONS;
     tableErrors = {};
-
-    if (level.type === 'distributed') {
-        let queue = [];
-        level.distribution.forEach(({ table, count, minB }) => {
-            for (let i = 0; i < count; i++) queue.push({ table, minB: minB || 0 });
-        });
-        queue.sort(() => Math.random() - 0.5);
-        currentTableQueue = queue;
-    }
+    questionQueue = buildQuestionQueue(level);
 
     levelTitleText.textContent = level.title;
     scoreText.textContent = "0";
@@ -201,31 +224,16 @@ function generateQuestion() {
         return;
     }
 
-    let tableA, numberB;
+    const q = questionQueue[currentQuestionIndex];
+    questionData.table = q.table;
 
-    if (currentLevel.type === 'single') {
-        tableA = currentLevel.table;
-        numberB = Math.floor(Math.random() * 12);
-    } else if (currentLevel.type === 'distributed') {
-        const entry = currentTableQueue[currentQuestionIndex];
-        tableA = entry.table;
-        const minB = entry.minB || 0;
-        numberB = minB + Math.floor(Math.random() * (12 - minB));
+    // Τυχαία εναλλαγή για ποικιλία (π.χ. 5×3 ή 3×5)
+    if (Math.random() > 0.5) {
+        questionData.a = q.tableVal;
+        questionData.b = q.otherVal;
     } else {
-        const randomIndex = Math.floor(Math.random() * currentLevel.tables.length);
-        tableA = currentLevel.tables[randomIndex];
-        numberB = Math.floor(Math.random() * 12);
-    }
-    
-    questionData.table = tableA; // αποθηκεύουμε για το report
-
-    // Sometimes swap a and b for variety (e.g. 5x4 or 4x5)
-    if(Math.random() > 0.5) {
-        questionData.a = numberB;
-        questionData.b = tableA;
-    } else {
-        questionData.a = tableA;
-        questionData.b = numberB;
+        questionData.a = q.otherVal;
+        questionData.b = q.tableVal;
     }
     
     questionData.correctAnswer = questionData.a * questionData.b;
