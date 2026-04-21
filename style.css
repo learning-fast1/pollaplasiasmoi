@@ -1,3 +1,27 @@
+@font-face {
+    font-family: 'Fredoka One';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('fonts/FredokaOne.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('fonts/Nunito700.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 900;
+    font-display: swap;
+    src: url('fonts/Nunito900.ttf') format('truetype');
+}
+
 :root {
     --bg-gradient: linear-gradient(180deg, #2e7d32 0%, #388e3c 40%, #2e7d32 100%);
     --card-bg: rgba(255, 255, 255, 0.85);

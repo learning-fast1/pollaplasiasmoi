@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p fonts)",
+      "Bash(curl -L \"https://fonts.gstatic.com/s/fredokaone/v14/k3kUo8kEI-tA1RRcTZGmTlHGCaen8wf-.woff2\" -o fonts/FredokaOne.woff2)",
+      "Bash(curl -L \"https://fonts.gstatic.com/s/nunito/v26/XRXI3I6Li01BKofiOc5wtlZ2di8HDDshRTM9jo7eTWk.woff2\" -o fonts/Nunito700.woff2)",
+      "Bash(curl -L \"https://fonts.gstatic.com/s/nunito/v26/XRXI3I6Li01BKofiOc5wtlZ2di8HDIUhRTM9jo7eTWk.woff2\" -o fonts/Nunito900.woff2)",
+      "Bash(curl -s -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\)\" \"https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap\")",
+      "Bash(curl -L \"https://fonts.gstatic.com/s/fredokaone/v15/k3kUo8kEI-tA1RRcTZGmTmHB.ttf\" -o FredokaOne.ttf)",
+      "Bash(curl -L \"https://fonts.gstatic.com/s/nunito/v32/XRXI3I6Li01BKofiOc5wtlZ2di8HDFwmRTM.ttf\" -o Nunito700.ttf)",
+      "Bash(curl -L \"https://fonts.gstatic.com/s/nunito/v32/XRXI3I6Li01BKofiOc5wtlZ2di8HDBImRTM.ttf\" -o Nunito900.ttf)"
+    ]
+  }
+}
