@@ -14,12 +14,12 @@ const LEVELS = [
     { id: 12, title: "Προπαίδεια του 11", type: "single", table: 11 },
     { id: 13, title: "Προπαίδειες από το 0 - 5", type: "distributed", isBoss: true, questions: 20,
       distribution: [
-          { table: 0, count: 2 },
-          { table: 1, count: 2 },
+          { table: 0, count: 1 },
+          { table: 1, count: 1 },
           { table: 2, count: 4 },
           { table: 3, count: 4 },
-          { table: 4, count: 4 },
-          { table: 5, count: 4 }
+          { table: 4, count: 5 },
+          { table: 5, count: 5 }
       ]
     },
     { id: 14, title: "Τερματισμός", type: "distributed", isBoss: true, questions: 30,
