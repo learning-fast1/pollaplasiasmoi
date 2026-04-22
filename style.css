@@ -650,17 +650,59 @@ body {
     100% { transform: scale(1); opacity: 1; }
 }
 
-/* Ανταπόκριση για Κινητά / Tablets */
+/* ── ΚΙΝΗΤΑ ── */
 @media (max-width: 600px) {
-    #question-text { font-size: 48px; }
-    .question-container { padding: 30px; }
-    .answer-btn { font-size: 28px; padding: 15px 0; }
-    .level-node { width: 70px; height: 70px; font-size: 24px; }
-    #map-screen header h1 { font-size: 24px; }
-    #total-stars-display { 
-        position: static; 
-        transform: none; 
-        display: inline-block;
-        margin-top: 10px; 
+
+    /* Χάρτης */
+    #map-screen header { padding: 10px 12px 10px 90px; }
+    #map-screen header h1 { font-size: 18px; }
+    #map-screen header p  { font-size: 13px; margin-top: 2px; }
+    #header-logo { height: 60px; }
+    #total-stars-display {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 14px;
+        padding: 5px 10px;
     }
+    .level-node { width: 65px; height: 65px; font-size: 22px; }
+    .level-node.boss { width: 75px; height: 75px; }
+    .node-label { font-size: 12px; padding: 3px 7px; top: -26px; }
+
+    /* Game header — 2 γραμμές σε mobile */
+    .game-header {
+        flex-wrap: wrap;
+        padding: 10px 12px 8px;
+        gap: 8px;
+    }
+    .btn-round { width: 40px; height: 40px; font-size: 18px; line-height: 40px; flex-shrink: 0; }
+    #level-title { font-size: 16px; flex: 1; text-align: center; }
+    .score-display { font-size: 15px; padding: 4px 10px; flex-shrink: 0; }
+    /* Progress bar σε δεύτερη γραμμή, full width */
+    .progress-container {
+        order: 10;
+        flex-basis: 100%;
+        margin: 0;
+        height: 12px;
+    }
+
+    /* Ερώτηση */
+    .game-board { padding: 12px 16px; }
+    .question-container { padding: 18px 30px; margin-bottom: 20px; border-radius: 20px; border-width: 3px; }
+    #question-text { font-size: 44px; }
+
+    /* Κουμπιά απαντήσεων */
+    .answers-grid { gap: 12px; }
+    .answer-btn { font-size: 26px; padding: 14px 0; border-width: 3px; border-radius: 14px; }
+
+    /* Modal αποτελεσμάτων */
+    .result-modal { padding: 24px 18px; }
+    .result-modal h2 { font-size: 24px; margin-bottom: 12px; }
+    .stars-earned { font-size: 38px; gap: 10px; margin-bottom: 12px; }
+    #result-message { font-size: 17px; }
+    .btn-primary { font-size: 18px; padding: 12px 30px; }
+    .report-title { font-size: 15px; }
+    .report-label, .report-ok-label { font-size: 13px; padding: 2px 6px; min-width: 34px; }
+    .report-count { font-size: 12px; min-width: 44px; }
 }
