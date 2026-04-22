@@ -296,7 +296,7 @@ function handleAnswer(selectedAnswer, btnElement) {
     if (selectedAnswer === questionData.correctAnswer) {
         btnElement.classList.add('correct');
         currentCorrectAnswers++;
-        scoreText.textContent = currentCorrectAnswers * 10;
+        scoreText.textContent = Math.round((currentCorrectAnswers / levelQuestions) * 100);
         // Play success sound (conceptually)
     } else {
         btnElement.classList.add('wrong');
