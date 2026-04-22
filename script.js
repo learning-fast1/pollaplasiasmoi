@@ -117,7 +117,7 @@ function renderMap() {
     LEVELS.forEach(level => {
         const node = document.createElement('div');
         node.className = `level-node ${level.isBoss ? 'boss' : ''}`;
-        node.textContent = level.id - 1;
+        node.textContent = level.type === 'single' ? level.table : '★';
 
         // Stars display
         const earnedStars = userProgress[level.id] || 0;
