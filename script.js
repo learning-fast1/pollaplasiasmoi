@@ -16,10 +16,10 @@ const LEVELS = [
       distribution: [
           { table: 0, count: 1 },
           { table: 1, count: 1 },
-          { table: 2, count: 4 },
-          { table: 3, count: 4 },
-          { table: 4, count: 5 },
-          { table: 5, count: 5 }
+          { table: 2, count: 2 },
+          { table: 3, count: 5 },
+          { table: 4, count: 6 },
+          { table: 5, count: 6 }
       ]
     },
     { id: 14, title: "Τερματισμός", type: "distributed", isBoss: true, questions: 30,
